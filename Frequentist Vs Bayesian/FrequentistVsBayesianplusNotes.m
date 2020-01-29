@@ -1,6 +1,23 @@
 % Frequentist versus Bayesian Statistics
-%
+%One big difference between these concepts is the necessity for prior knowledge:
+%Another big piece is that a Bayesian process is a belief-updating process, but a Frequentist hypothesis is not
 % To use this tutorial, read the commands and execute the code line-by-line.
+%
+%Frequentist approach: the probability of getting this data is the one that is uncertain. The idea that the hypothesis
+%is probabilistic is not part of frequentist approaches, becasue in a frequentist approach you're looking at a hypothesis that is 
+%TRUE or NOT TRUE. It's binary; it can't be anything else. Onus of variability is on the DATA, not the HYPOTHESIS
+%
+%Bayesian approach: the probability that the HYPOTHESIS is correct. The thing that matters is, HOW CLOSELY CAN WE KNOW?
+%This requires prior evidence (prior); sometimes these are assumptions and sometimes this is based on updatable data. But you have
+%to be careful, because you really need to justify the prior that you're using, because you can end up with results that are narrowly
+%dependent on prior choice. Note that PRIORS are also updated!!!! If you're coding, you'd usually update the prior after each test.
+%e.g. the posterior that you generate becomes your new prior in this sort of situation
+%e.g. if your hypothesis is a or b, those are the two options: your prior is the probability of each of those (relative probs.)
+%Typically assume an uninformative prior (i.e. assume it's uniform - idk what that means.) This provides a conservative estimate for a statistical test: this makes it %
+%harder for your hypothesis to be true and increases the strength of your conclusion if it is.
+%Note that this is an inherently belief-updating process! Also, note that these are more being used to create a confidence interval, 
+%Rather than for hypothesis tests.
+%Note that you have to stop at some point; for that you usually just pre-define your "this is good enough!" and stop when you get there.
 %
 % The learning objective is to gain insights into thinking about inference
 % from a "Frequentist" versus a "Bayesian" perspective. In brief, because a
