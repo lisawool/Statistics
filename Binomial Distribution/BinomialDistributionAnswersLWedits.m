@@ -8,15 +8,25 @@
 %% Exercise 1
 % Note that omitting the semicolon at the end of a line causes the output
 % to be shown in the Command Window.
-n = 10;                       % Number of available quanta
+n = 10;                       % Number of available quanta(events)
 pRelease = 0.2;               % Release probabilty 
-k = 0:10;                     % Possible values of k (measured events)
+k = 0:10;                     % POSSIBLE values of k (measured events); creates a vector
+%NOTES: Vectors.
+%Vectors/matrices are arrangements of values; vector is 1D, matrices are multiD
+%Another way of doing this is running it through a loop, but it's less efficient in matlab; Matlab is specialized to help you 
+%Do it more efficiently.
 probs = binopdf(k,n,pRelease) % Array of probabilities of obtaining those values of k, given n and prelease
-
-%% Exercise 2
+%Could also do this as a loop:
+%for ii = 0:10
+%probs2 (ii) = binopdf(ii,n,pRelease)
+%end
+%%
+%Note that Josh uses double letters for for loops; this is his thing to make it easier to spot. Not an important syntactical consideration.
+%Also, ' = transpose. If you wanted k = 0:10; to be a column vector not a row vector, do k = (0:10)';
+%% Exercise 2 - this is our likelihood function
 n = 14;                       % Number of available quanta
 k = 8;                        % Measured number of released quanta
-prob1  = binopdf(k,n,0.1)     % Probabilty of obtaining k if release p = 0.1
+prob1  = binopdf(k,n,0.1)     % Probabilty of obtaining k if release p = 0.1 (release probability is the HYPOTHESIS, k = the DATA)
 prob2  = binopdf(k,n,0.2)     % Probabilty of obtaining k if release p = 0.2
 prob3  = binopdf(k,n,0.3)     % Probabilty of obtaining k if release p = 0.3
 prob4  = binopdf(k,n,0.4)     % Probabilty of obtaining k if release p = 0.4
@@ -28,6 +38,8 @@ prob9  = binopdf(k,n,0.9)     % Probabilty of obtaining k if release p = 0.9
 prob10 = binopdf(k,n,1.0)     % Probabilty of obtaining k if release p = 1.0
 
 %% Exercise 3
+%Principle of this: A HUGE ASSUMPTION IS THAT THESE TWO EVENTS ARE INDEPENDENT; THERE ARE LOTS OF REASONS THAT THIS COULD POSSIBLY 
+%BE A BAD ASSUMPTION! Though sometimes it's fine. And it makes the math a lot easier :)
 % Likelihood and log-likelihood for sample size = 2, assumed pRelease=0.1
 n1 = 14;                      % Number of available quanta, experiment 1
 n2 = 14;                      % Number of available quanta, experiment 2
@@ -37,26 +49,33 @@ pRelease = 0.1;               % Assumed probability of release
 prob1 = binopdf(k1,n1,pRelease) % Probabilty of obtaining data 1 (k1) given n1, prelease
 prob2 = binopdf(k2,n2,pRelease) % Probabilty of obtaining data 2 (k2) given n2, prelease
 totalProb = prob1 * prob2     % Assume independence and compute product
+%This next thing is to avoid hitting the resolution limits of floating point precision (i.e. 32bits for matlab); that is, we'll run into too many zeros very quickly.
 totalLogProb = log(prob1) + log(prob2) % Assume independence and compute sum
 
 % likelihood and log-likelihood functions for sample size = 2
-ps = (0:0.01:1.0)';           % Array of possible release probabilities -- compute
+ps = (0:0.01:1.0)';           % Array of possible release probabilities -- compute (0.01 tells you what to increment by; could run this without that (i.e. 0:10) but it would increment automatically by 1
                               % at a resolution of 0.01
 nps = length(ps);             % Get length of array of values of p
-probs = binopdf( ....         % Get value of the binomial distribution for each
-   repmat([k1 k2], nps, 1), ...  % combination of k, n, p. The output is a matrix
-   repmat([n1 n2], nps, 1), ...  % with two rows: 1) n1, k1  2) n2, k2
-   repmat(ps, 1, 2));            % columns are different values of p
+probs = binopdf( ....         % Get value of the binomial distribution for each; repmat = making matrix of k values (101x2) (2 columns)
+   repmat([k1 k2], nps, 1), ...  % combination of k, n, p. The output is a matrix; repmat = making matrix of n values (101 x 2) (2 columns)
+   repmat([n1 n2], nps, 1), ...  % with two rows: 1) n1, k1  2) n2, k2; 
+   repmat(ps, 1, 2));            % columns are different values of p; repmat = making matrix of p values (101 x 2)
+   %repeat matrix (values - which may already be a matrix, x number of rows you want, x number of columns you want)
 
 % The likelihood function is the product of likelihoods (assuming
 % independence)
-subplot(2,1,1); cla reset; hold on;
+subplot(2,1,1); cla reset; hold on; %Creates plots on a figure; if you do it all by iteslf it'll open the figure for you. Divide by (# rows, # columns, which plot); cla reset = clear axes/reset
 ylabel('Likelihood');
-likelihoodFcn = prod(probs,2);   % Compute the product
+likelihoodFcn = prod(probs,2);   % The 2 tells us which dimension to do it over. Compute the product; can achieve this in a number of ways, like by calling individual values and multiplying the, probs(:,1) = all of the rows (colon) but just the first column. Can also do a for loop.
+%Note that multiplying multiple matrices is a problem bc of how matrix operations work. .* (or ./, in the opposite case) does this for you. 
 plot(ps, likelihoodFcn);         % Plot it
 maxLikelihood = max(likelihoodFcn); % Get the maximum likelihood
 plot(ps(likelihoodFcn==maxLikelihood), maxLikelihood, 'ko');
-
+%== checks each element of the vector and returns a vector of 0s where it's fales and 1 where it's true (so there's a 1 in exactly the place wehre the maximum was found
+%now we need to pull out the entry that we want! Which is this single 1. One way to do this: give it a vector of indices. Vectors are defined
+%by brackets. if we want 1st, 3rd, and 56th entry: make a vector of 1, 3, and 55: ps([1 3 55]) in the vector ps.
+%Finally, asking this to access this logicals vector for ps returns ps only where the index is 1. SO. This tells us where the value is the MAXIMUM.
+%Which is what we wanted all along!
 % The log-likelihood function is the sum of log-likelihoods (assuming
 % independence)
 subplot(2,1,2); cla reset; hold on;
@@ -100,7 +119,7 @@ ks = 0:n;                     % possible values of k
 ps = 0:0.01:1.0;              % possible release probabilities
 pdat = zeros(length(ps), 2);  % pre-allocate matrix to hold likelihoods per p
 TINY = 0.0001;                % to avoid multiplying/taking logs of really small numbers
-for sampleSize = round(logspace(0,3,30))  % try different sample sizes
+for sampleSize = round(logspace(0,3,30))  % try different sample sizes; round(logspace(0,3,30)) is a row vector and HAS to be. 30 different values, spaced betweeen 10^0 and 10^3
    
    % Simulate experiments -- get simulated counts for the given n,
    % pRelease, and number of experiments
