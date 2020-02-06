@@ -5,27 +5,27 @@
 %% One-sample t-test for H0:mean=0
 %
 % Define the population distribution
-MU  = 1;
-STD = 1;
+MU  = 1;%mu = mean of the NULL distribution
+STD = 1; %stdev
 
 % Get random samples
-N = 10;
-X = normrnd(MU, sqrt(STD), N, 1);
+N = 10; %number of samples
+X = normrnd(MU, sqrt(STD), N, 1); %normal distribution of this number of samples (note this is an assumption of t-tests)
 
 % Compute the sample mean
-Xbar = mean(X);
+Xbar = mean(X); %save this value
 
 % Compute the sample std
-S = sqrt((1./(N-1)).*sum((X-Xbar).^2)); % same as S = std(X);
+S = sqrt((1./(N-1)).*sum((X-Xbar).^2)); % same as S = std(X); %this is the REAL stdev, as opposed to the assumed STD we used earlier to generate the data points
 
 % Compute the t-statistic 
-t = Xbar*sqrt(N)/S;
+t = Xbar*sqrt(N)/S; %This is the difference between what we thought we'd get and what we got. I think. 
 
 % The p-value is the probabilty of obtaining the t-statistic under the
 % null hypothesis; that is, 1 minus the cdf of the t-distribution, given
 % n-1 degrees of freedom (multiplied by two because we are looking at two
 % symmetric tails)
-p = 2.*(1-tcdf(t, N-1));
+p = 2.*(1-tcdf(t, N-1)); %1-cdf = actual probability at this point. 
 
 % Compare to what we get from ttest
 [~,P,~,STATS] = ttest(X);
@@ -40,12 +40,12 @@ disp(sprintf('p           = %.4f (computed) %.4f (from ttest)', p, P))
 %  0-mean noise
 MU1      = 1;
 MUDIFF   = 1;
-MUNOISE  = 0;
+MUNOISE  = 0; %how is this computed?
 STDNOISE = 0.5;
 STD      = 1;
 
 % Get random samples
-N = 10;
+N = 10; %Note that when I changed this to 30, I got 0 for the p value. Ask josh about the limits of matlab floats.
 X1 = normrnd(MU1, sqrt(STD), N, 1);
 X2 = X1 + MUDIFF + normrnd(MUNOISE, STDNOISE, N, 1);
 
