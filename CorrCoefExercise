@@ -1,0 +1,63 @@
+%This is my code for the exercise (largely derived from the example code provided)
+%Get data
+Winglength = [10.4 10.8 11.1 10.2 10.3 10.2 10.7 10.5 10.8 11.2 10.6 11.4];
+Taillength = [7.4 7.6 7.9 7.2 7.4 7.1 7.4 7.2 7.8 7.7 7.8 8.3];
+
+%Plot
+figure
+plot(Taillength, Winglength, 'ko-')
+xlabel('Tail Length (cm)');
+ylabel('Wing Length (cm)');
+
+%Compute Rx,y by hand
+n = length(Winglength) %get the sample size
+MeanWingLength = sum(Winglength)./n
+MeanTailLength = sum(Taillength)./n
+SSEX = sum((Winglength-MeanWingLength).^2) %Sum of x in lower term
+SSEY = sum((Taillength-MeanTailLength).^2) %sum of y in lower term
+SCOVXY = sum((Winglength-MeanWingLength).*(Taillength-MeanTailLength))
+rXY = SCOVXY/(sqrt(SSEX)*sqrt(SSEY)) %Note that for this the answer was 0.8704
+
+%Compute Rx,y using built in function
+rBuiltIn = corrcoef(Winglength, Taillength) %Note that for this the answer was 0.8704
+
+%Therefore, yes, calculating this by hand and using the built-in corrcoef
+%gives the same result.
+
+%Question 3
+%Standard error: 0.1326
+SErxy = sqrt((1+(rXY)*(rXY)))/(n-2)
+
+%Confidence interval: 95% is 0.5923-0.9632
+%Four step process.
+%Step 1: take fisher z transformation
+z=log((1+rXY)/(1-rXY))/2
+%Step 2: Compute SD
+sdz = sqrt(1/(n-3))
+%Step 3: Compute interval in "z space"
+zspaceci = z+[1 -1].*norminv(0.025).*sdz
+%Step 4: translate zs back to rs
+CI95 = (exp(2.*zspaceci)-1)./(exp(2.*zspaceci)+1)
+
+%Question 4: Is this significant given null hypothesis at p<0.05
+%IT seems to be with a p value of 0.000318
+Tval = rXY/SErxy
+prob = 1-tcdf(Tval,n-2)
+disp(sprintf('p=%.7f for H0: r=0', prob))
+
+%Question 5: These are not significantly different, with a p value of
+%0.928.
+myz=0.5*(log((1+rXY)/1-(rXY)))
+yalez = 0.5*log((1+0.75)/(1-0.75))
+z = (myz-yalez)/sqrt(1/9)
+prob2 = 1-tcdf(z/2, inf)
+disp(sprintf('p=%.7f for H0: r=0.75', prob2))
+%Question 6: Power analysis!!
+v = n-2;
+myz = myz;
+tcrit = tinv(1-0.05/2,v)
+rcrit = sqrt(tcrit^2/(tcrit^2+v))
+zr = 0.5*log((1+rcrit)/(1-rcrit))
+Zb = (myz-zr)*sqrt(n-3)
+power = normcdf(Zb);
+disp(['The power of the test of the null hypothesis r=0 is ' num2str(power)])
