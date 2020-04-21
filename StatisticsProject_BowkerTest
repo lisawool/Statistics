@@ -1,0 +1,20 @@
+%This script performs a McNemar-Bowker test for symmetry on a kxk
+%contingency table. You need to enter your data as a matrix
+%and call the function BowkerTest, which I got from the Matlab website and saved as a function called BowkerTest (NOTE: I DID NOT WRITE THIS CODE!! link here:https://www.mathworks.com/matlabcentral/fileexchange/6322-bowkertest?s_tid=srchtitle)Let's see if this works.
+
+%For the Von Frey Withdrawal data we had 4 possible outcomes so a 4x4
+%contingency table, so create a 4x4 matrix with your data saved. These were
+%pre-calculated in excel spreadsheet LWSummary, available on my
+%PennBox/LabArchives page.
+%Here's the pre-SNI vs Post-SNI data
+
+SNI = [1 1 0 0;1 1 1 0; 2 0 0 2;1 1 2 0]
+%Here's the Saline vs CNO data
+Drug = [1 1 0 3;0 0 1 0;1 1 0 1;1 1 1 0]
+
+%Perform Bowker Test analysis on contingency table for SNI pre/post data.
+%Call function BowkerTest(Matrix,tails_of_test,alpha_value)
+%For tails_of_test, enter 1 to run a 1-tailed test, enter 2 to run a
+%2-tailed test. For alpha_value, enter the acceptable Type1 error rate.
+BowkerTest(SNI,2,0.05) %Returned for these as p=0.5438; df=6; b=5
+BowkerTest(Drug,2,0.05)%Returned for these as p=0.6767; df=6; b=4
